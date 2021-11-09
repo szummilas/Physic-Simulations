@@ -1,7 +1,6 @@
-# TODO : clock
-
 import pygame
 import random
+import thorpy
 
 pygame.init()
 screen_width = 1280
@@ -16,63 +15,78 @@ screen.fill(background_color)
 
 pygame.display.flip()
 printing = True
-TARGET_FPS = 60
+TARGET_FPS = 30
 clock = pygame.time.Clock()
-g = 9.81
+g = 0.9
 
 
 # Euler's disks
 class Circles:
-    def __init__(self, number, radius, border, v):
+    def __init__(self, number, radius, border):
         self.number = number
         self.radius = radius
         self.border = border
-        self.v = v
+        self.velocity = pygame.math.Vector2(random.randint(1, 3), random.randint(1, 10))
         self.color = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
-        self.position = [random.randint(2 * self.radius, screen_width - 2 * self.radius),
-                         random.randint(2 * self.radius, screen_height - 2 * self.radius)]
+        self.position = pygame.math.Vector2(random.randint(2 * self.radius, screen_width - 2 * self.radius),
+                                            random.randint(2 * self.radius, screen_height - 2 * self.radius))
 
-    def draw(self):
-        pygame.draw.circle(screen, (self.color[0], self.color[1], self.color[2]), (self.position[0], self.position[1]),
-                           self.radius, self.border)
+    def physics(self, dt):
+        # y = y + v * dt
+        self.position = self.position + self.velocity * dt
+        # v(y) = v(y) + g * dt
+        self.velocity.y = self.velocity.y + g * dt
 
+    def update(self, dt):
+        self.physics(dt)
 
-# create list with random position x and y of circles
-position = [[], []]
-# for i in range(0, 1000):
-#     pos_x = random.randint(0 + , screen_width)
-#     pos_y = random.randint(100, 600)
-#     position[0].append(pos_x)
-#     position[1].append(pos_y)
+    def draw(self, display):
+        pygame.draw.circle(display, self.color, self.position, self.radius, self.border)
+
 
 # list comprehension
 # creating circle objects
-circles_list = [Circles(x, 10, 3, 3) for x in range(0, 1000)]
+circles_list = [Circles(x, 10, 3) for x in range(0, 1000)]
 
-# y = y + v * dt
-# v = v + g * dt
+# THOR.PY
+slider = thorpy.SliderX(100, (0, 1000), "Slider")
+box = thorpy.Box(elements=[slider])
+menu = thorpy.Menu(box)
+for element in menu.get_population():
+    element.surface = screen
+box.set_topleft((100, 100))
+
 
 running = True
+freeze_time = False
 while running:
-    dt = clock.tick(60) * .001 * TARGET_FPS
+    dt = clock.tick(30) * .001 * TARGET_FPS
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                if not freeze_time:
+                    freeze_time = True
+                else:
+                    freeze_time = False
 
-    dt = clock.tick(30) / 1000.0
+        menu.react(event)
 
     screen.fill(background_color)
+    box.blit()
+    box.update()
 
-    for i in range(len(circles_list)):
-        circles_list[i].draw()
+    for i in range(1, int(slider.get_value())):
+        if not freeze_time:
+            circles_list[i].update(dt)
+        circles_list[i].draw(screen)
 
-        circles_list[i].v = circles_list[i].v + g * dt
-        circles_list[i].position[1] = circles_list[i].position[1] + circles_list[i].v * dt
+        if circles_list[i].position.x >= (screen_width - circles_list[i].radius) or \
+                circles_list[i].position.x <= 0 + circles_list[i].radius:
+            circles_list[i].velocity.x = - circles_list[i].velocity.x
 
-        if circles_list[i].position[0] > (screen_width - circles_list[i].radius):
-            circles_list[i].v = - circles_list[i].v
-
-        if circles_list[i].position[1] > (screen_height - circles_list[i].radius):
-            circles_list[i].v = - circles_list[i].v
+        if circles_list[i].position.y >= (screen_height - circles_list[i].radius):
+            circles_list[i].velocity.y = - circles_list[i].velocity.y
 
     pygame.display.update()
