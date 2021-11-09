@@ -32,18 +32,19 @@ class Circles:
         self.position = [random.randint(2 * self.radius, screen_width - 2 * self.radius),
                          random.randint(2 * self.radius, screen_height - 2 * self.radius)]
 
-    def draw(self):
-        pygame.draw.circle(screen, (self.color[0], self.color[1], self.color[2]), (self.position[0], self.position[1]),
+    def physics(self, dt):
+        # y = y + v * dt
+        self.position[1] = self.position[1] + self.v * dt
+        # v = v + g * dt
+        self.v = self.v + g * dt
+
+    def update(self, dt):
+        self.physics(dt)
+
+    def draw(self, display):
+        pygame.draw.circle(display, (self.color[0], self.color[1], self.color[2]), (self.position[0], self.position[1]),
                            self.radius, self.border)
 
-
-# create list with random position x and y of circles
-position = [[], []]
-# for i in range(0, 1000):
-#     pos_x = random.randint(0 + , screen_width)
-#     pos_y = random.randint(100, 600)
-#     position[0].append(pos_x)
-#     position[1].append(pos_y)
 
 # list comprehension
 # creating circle objects
@@ -59,15 +60,17 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    dt = clock.tick(30) / 1000.0
-
     screen.fill(background_color)
 
     for i in range(len(circles_list)):
-        circles_list[i].draw()
+        circles_list[i].update(dt)
+        circles_list[i].draw(screen)
 
-        circles_list[i].v = circles_list[i].v + g * dt
-        circles_list[i].position[1] = circles_list[i].position[1] + circles_list[i].v * dt
+        # # y = y + v * dt
+        # circles_list[i].position[1] = circles_list[i].position[1] + circles_list[i].v * dt
+        #
+        # # v = v + * dt
+        # circles_list[i].v = circles_list[i].v + g * dt
 
         if circles_list[i].position[0] > (screen_width - circles_list[i].radius):
             circles_list[i].v = - circles_list[i].v
