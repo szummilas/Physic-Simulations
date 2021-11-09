@@ -49,8 +49,9 @@ class Circles:
 circles_list = [Circles(x, 10, 3) for x in range(0, 1000)]
 
 # THOR.PY
-slider = thorpy.SliderX(100, (0, 1000), "Slider")
-box = thorpy.Box(elements=[slider])
+slider_quantity = thorpy.SliderX(100, (0, 1000), "Quantity")
+slider_size = thorpy.SliderX(100, (10, 50), "Size")
+box = thorpy.Box(elements=[slider_quantity, slider_size])
 menu = thorpy.Menu(box)
 for element in menu.get_population():
     element.surface = screen
@@ -77,10 +78,12 @@ while running:
     box.blit()
     box.update()
 
-    for i in range(1, int(slider.get_value())):
+    for i in range(1, int(slider_quantity.get_value())):
         if not freeze_time:
             circles_list[i].update(dt)
         circles_list[i].draw(screen)
+
+        circles_list[i].radius = int(slider_size.get_value())
 
         if circles_list[i].position.x >= (screen_width - circles_list[i].radius) or \
                 circles_list[i].position.x <= 0 + circles_list[i].radius:
