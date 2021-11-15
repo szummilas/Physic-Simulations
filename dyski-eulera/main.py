@@ -1,95 +1,126 @@
 import pygame
 import random
-import thorpy
 
 pygame.init()
-screen_width = 1280
-screen_height = 720
-resolution = [screen_width, screen_height]
-background_color = (255, 255, 255)
-red = (200, 0, 0)
+WIDTH = 1280
+HEIGHT = 720
+resolution = [WIDTH, HEIGHT]
+BACKGROUND = pygame.image.load("background.jpg")
+WHITE = (255, 255, 255)
+PINK = (255, 63, 180)
+LIME = (208, 255, 63)
+BLUE = (99, 63, 255)
+PURPLE = (103, 160, 237)
 
 screen = pygame.display.set_mode(resolution)
 pygame.display.set_caption('Euler\'s disks')
-screen.fill(background_color)
 
 pygame.display.flip()
 printing = True
 TARGET_FPS = 30
 clock = pygame.time.Clock()
-g = 0.9
+gravity = 0.9
+CENTER = pygame.math.Vector2(WIDTH / 2, HEIGHT / 2)
+
+Dict = {
+    1: 'gravity',
+    2: 'attract',
+    3: 'aerodynamics'
+}
 
 
 # Euler's disks
-class Circles:
-    def __init__(self, number, radius, border):
-        self.number = number
-        self.radius = radius
-        self.border = border
-        self.velocity = pygame.math.Vector2(random.randint(1, 3), random.randint(1, 10))
-        self.color = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
-        self.position = pygame.math.Vector2(random.randint(2 * self.radius, screen_width - 2 * self.radius),
-                                            random.randint(2 * self.radius, screen_height - 2 * self.radius))
+class Circle:
+    def __init__(self):
+        self.g = 0.9
 
-    def physics(self, dt):
-        # y = y + v * dt
-        self.position = self.position + self.velocity * dt
-        # v(y) = v(y) + g * dt
-        self.velocity.y = self.velocity.y + g * dt
+        # random position
+        self.position = pygame.math.Vector2(random.randint(0, WIDTH), random.randint(0, HEIGHT))
 
-    def update(self, dt):
-        self.physics(dt)
+        # random velocity ( x axis and y axis )
+        self.velocity = pygame.math.Vector2(random.randint(-39, 39) / 100, random.randint(-39, 39) / 100)
 
-    def draw(self, display):
-        pygame.draw.circle(display, self.color, self.position, self.radius, self.border)
+        # random drag
+        self.drag = random.randint(970, 990) / 1000
+
+        # force vector
+        self.force = pygame.math.Vector2(0, 0)
+
+    def update(self, mode, delta_time):
+        if mode == 'gravity':
+            # y = y + v * dt
+            self.position = self.position + self.velocity * delta_time
+
+            # v(y) = v(y) + g * dt
+            self.velocity.y = self.velocity.y + self.g * delta_time
+            self.velocity.x = 0.0
+
+            # screen borders
+            if self.position.y + self.velocity.y < 0 or self.position.y + self.velocity.y > HEIGHT:
+                self.velocity.y = -self.velocity.y
+            if self.position.x + self.velocity.x < 0 or self.position.x + self.velocity.x > HEIGHT:
+                self.velocity.x = -self.velocity.x
+
+        elif mode == 'attract':
+            # distance between cursor and disk position
+            self.force = pygame.math.Vector2(pygame.mouse.get_pos()) - self.position
+            self.force = self.force.normalize()
+
+            # apply drag
+            self.velocity *= self.drag
+
+            # apply force
+            self.velocity += self.force * 0.6
+
+            # update position
+            self.position += self.velocity
+
+            # screen borders
+            if self.position.x > WIDTH:
+                self.position.x = WIDTH
+                self.velocity.x *= -1.0
+            elif self.position.x < 0:
+                self.position.x = 0
+                self.velocity.x *= -1.0
+
+            if self.position.y > HEIGHT:
+                self.position.y = HEIGHT
+                self.velocity.y *= -1.0
+            elif self.position.y < 0:
+                self.position.y = 0
+                self.velocity.y *= -1.0
+
+    def draw(self, display, color):
+        pygame.draw.circle(display, color, self.position, 4)
 
 
-# list comprehension
-# creating circle objects
-circles_list = [Circles(x, 10, 3) for x in range(0, 1000)]
-
-# THOR.PY
-slider_quantity = thorpy.SliderX(100, (0, 1000), "Quantity")
-slider_size = thorpy.SliderX(100, (10, 50), "Size")
-box = thorpy.Box(elements=[slider_quantity, slider_size])
-menu = thorpy.Menu(box)
-for element in menu.get_population():
-    element.surface = screen
-box.set_topleft((100, 100))
-
-
+circles_list = [Circle() for _ in range(0, 1000)]
 running = True
-freeze_time = False
+current_mode = Dict[1]
+COLOR = PINK
 while running:
-    dt = clock.tick(30) * .001 * TARGET_FPS
+    dt = clock.tick(TARGET_FPS) * .001 * TARGET_FPS
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
         if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_1:
+                COLOR = PINK
+                TARGET_FPS = 30
+                current_mode = Dict[1]
+            if event.key == pygame.K_2:
+                COLOR = LIME
+                TARGET_FPS = 60
+                current_mode = Dict[2]
             if event.key == pygame.K_SPACE:
-                if not freeze_time:
-                    freeze_time = True
-                else:
-                    freeze_time = False
+                circles_list.clear()
+                circles_list = [Circle() for _ in range(0, 1000)]
 
-        menu.react(event)
+    screen.blit(BACKGROUND, (0, 0))
 
-    screen.fill(background_color)
-    box.blit()
-    box.update()
-
-    for i in range(1, int(slider_quantity.get_value())):
-        if not freeze_time:
-            circles_list[i].update(dt)
-        circles_list[i].draw(screen)
-
-        circles_list[i].radius = int(slider_size.get_value())
-
-        if circles_list[i].position.x >= (screen_width - circles_list[i].radius) or \
-                circles_list[i].position.x <= 0 + circles_list[i].radius:
-            circles_list[i].velocity.x = - circles_list[i].velocity.x
-
-        if circles_list[i].position.y >= (screen_height - circles_list[i].radius):
-            circles_list[i].velocity.y = - circles_list[i].velocity.y
+    for i in range(len(circles_list)):
+        circles_list[i].draw(screen, COLOR)
+        circles_list[i].update(current_mode, dt)
 
     pygame.display.update()

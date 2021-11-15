@@ -1,5 +1,6 @@
 # mod-fiz-w-anim-komp
 blender/
+*.pdf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -23,13 +24,13 @@ parts/
 sdist/
 var/
 wheels/
-.idea/
 pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
+.
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
