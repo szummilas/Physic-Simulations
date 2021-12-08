@@ -12,8 +12,8 @@ blender/
 # ignore generated binaries
 # but not the data folder
 
-/bin/*
-!/bin/data/
+particleSystem/bin/*
+!particleSystem/bin/data/
 
 # general
 
