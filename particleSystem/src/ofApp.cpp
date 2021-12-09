@@ -15,17 +15,25 @@ void ofApp::setup(){
 	cam.setNearClip(10);
 	cam.setFarClip(1000);
 
-
-	emitter.setup(10000);
+	// emitter.setup(10000);
 
 	drawingGrid = false;
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 	emitter.update();
 
 	// std::cout << emitter.particles[10].age << '\n';
+
+	/*if (emitter.particles.size() != NULL) {
+		std::cout << "velocity: " << emitter.particles[100].velocity.y << '\n';
+		std::cout << "position: " << emitter.particles[100].position.y << '\n';
+	}*/
+
+	// std::cout << "width: " << ofGetWidth() << " height: " << ofGetHeight() << '\n';
+
+	std::cout << cam.worldToScreen(glm::vec3(100, 100, 100)) << '\n';
 }
 
 //--------------------------------------------------------------
@@ -33,7 +41,8 @@ void ofApp::draw(){
 	cam.begin();
 
 	ofEnableDepthTest();
-	ofEnableLighting();
+	//ofEnableLighting();
+	ofDisableLighting();
 
 	// draw the outer box
 	/*material.begin();
@@ -43,16 +52,33 @@ void ofApp::draw(){
 
 	ofPushStyle();
 
-	light.enable();
-	light.setPosition(-100, 0, 0);
-	//light.rotateDeg(10, 0, 0, 90);
-	//light.setSpotlight();
-	light.setDiffuseColor(ofColor::orange); // pogchamp light color
+	//light.enable();
+	//light.setPosition(0, -50, 0);
+	//light.setDirectional();
 	//light.draw();
+	////light.rotateDeg(10, 0, 0, 90);
+	////light.setSpotlight();
+	////light.setDiffuseColor(ofColor::orange); // pogchamp light color
+	////light.disable();
+	////ofDisableLighting();
+	emitter.draw();
+
 	//light.disable();
 	//ofDisableLighting();
-	emitter.draw();
+
+	ofSetColor(255, 255, 255);
+	//ofDrawSphere(light.getPosition(), 2.0);
+
 	if (drawingGrid) { grid.draw(); }
+
+	ofDrawBitmapString(".(x:-50, y:50, z:50) ", glm::vec3(-50, 50, 50));
+	ofDrawBitmapString(".(x:50, y:-50, z:50) ", glm::vec3(50, -50, 50));
+	ofDrawBitmapString(".(x:50, y:50, z:-50) ", glm::vec3(50, 50, -50));
+	ofDrawBitmapString(".(x:-50, y:-50, z:50) ", glm::vec3(-50, -50, 50));
+	ofDrawBitmapString(".(x:50, y:-50, z:-50) ", glm::vec3(50, -50, -50));
+	ofDrawBitmapString(".(x:-50, y:50, z:-50) ", glm::vec3(-50, 50, -50));
+	ofDrawBitmapString(".(x:-50, y:-50, z:-50) ", glm::vec3(-50, -50, -50));
+	ofDrawBitmapString(".(x:50, y:50, z:50) ", glm::vec3(50, 50, 50));
 
 	ofPopStyle();
 
