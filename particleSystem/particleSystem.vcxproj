@@ -181,6 +181,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\emitter.cpp" />
+    <ClCompile Include="src\grid.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\..\Documents\of_v0.11.2_vs2017_release\addons\ofxGui\src\ofxBaseGui.cpp" />
@@ -196,6 +197,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\emitter.h" />
+    <ClInclude Include="src\grid.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\..\Documents\of_v0.11.2_vs2017_release\addons\ofxGui\src\ofxBaseGui.h" />
     <ClInclude Include="..\..\..\..\Documents\of_v0.11.2_vs2017_release\addons\ofxGui\src\ofxButton.h" />

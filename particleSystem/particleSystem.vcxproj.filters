@@ -38,6 +38,7 @@
       <Filter>addons\ofxGui\src</Filter>
     </ClCompile>
     <ClCompile Include="src\emitter.cpp" />
+    <ClCompile Include="src\grid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -94,6 +95,7 @@
       <Filter>addons\ofxGui\src</Filter>
     </ClInclude>
     <ClInclude Include="src\emitter.h" />
+    <ClInclude Include="src\grid.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

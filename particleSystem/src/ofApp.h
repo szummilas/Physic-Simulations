@@ -1,6 +1,7 @@
 #pragma once
 #include "ofMain.h"
 #include "emitter.h"
+#include "grid.h"
 
 class ofApp : public ofBaseApp{
 
@@ -21,7 +22,13 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
+		bool drawingGrid;
+
 		ofEasyCam cam;
+		ofLight light;
+		ofMaterial material;
+		Grid grid;
+
 		Emitter emitter;
 		
 };

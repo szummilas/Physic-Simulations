@@ -2,7 +2,7 @@
 #include "ofMain.h"
 
 
-class Emitter
+class Emitter : public ofNode
 {
 public:
 	struct Particle {
