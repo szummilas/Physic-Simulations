@@ -2,16 +2,28 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	// ------- CAMERA SETUP STUFF -------
 
+	ofSetVerticalSync(true);
+	// this uses depth information for occlusion
+	// rather than always drawing things on top of each other
+	ofEnableDepthTest();
+
+	emitter.setup(1000);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+	emitter.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	cam.begin();
+
+	emitter.draw();
+
+	cam.end();
 
 }
 
