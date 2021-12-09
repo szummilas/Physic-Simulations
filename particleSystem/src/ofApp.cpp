@@ -18,6 +18,8 @@ void ofApp::setup(){
 	// emitter.setup(10000);
 
 	drawingGrid = false;
+	debugText = false;
+	box.set(20);
 }
 
 //--------------------------------------------------------------
@@ -33,7 +35,9 @@ void ofApp::update() {
 
 	// std::cout << "width: " << ofGetWidth() << " height: " << ofGetHeight() << '\n';
 
-	std::cout << cam.worldToScreen(glm::vec3(100, 100, 100)) << '\n';
+	// std::cout << cam.worldToScreen(glm::vec3(100, 100, 100)) << '\n';
+
+	std::cout << box.getX() << '\n';
 }
 
 //--------------------------------------------------------------
@@ -51,6 +55,9 @@ void ofApp::draw(){
 	material.end();*/
 
 	ofPushStyle();
+	box.setPosition(0, 0, 0);
+	//box.drawAxes(3);
+	//box.drawWireframe();
 
 	//light.enable();
 	//light.setPosition(0, -50, 0);
@@ -71,14 +78,29 @@ void ofApp::draw(){
 
 	if (drawingGrid) { grid.draw(); }
 
-	ofDrawBitmapString(".(x:-50, y:50, z:50) ", glm::vec3(-50, 50, 50));
-	ofDrawBitmapString(".(x:50, y:-50, z:50) ", glm::vec3(50, -50, 50));
-	ofDrawBitmapString(".(x:50, y:50, z:-50) ", glm::vec3(50, 50, -50));
-	ofDrawBitmapString(".(x:-50, y:-50, z:50) ", glm::vec3(-50, -50, 50));
-	ofDrawBitmapString(".(x:50, y:-50, z:-50) ", glm::vec3(50, -50, -50));
-	ofDrawBitmapString(".(x:-50, y:50, z:-50) ", glm::vec3(-50, 50, -50));
-	ofDrawBitmapString(".(x:-50, y:-50, z:-50) ", glm::vec3(-50, -50, -50));
-	ofDrawBitmapString(".(x:50, y:50, z:50) ", glm::vec3(50, 50, 50));
+	if (debugText) {
+		ofDrawBitmapString(".(x:-50, y:50, z:50) ", glm::vec3(-50, 50, 50));
+		ofDrawBitmapString(".(x:50, y:-50, z:50) ", glm::vec3(50, -50, 50));
+		ofDrawBitmapString(".(x:50, y:50, z:-50) ", glm::vec3(50, 50, -50));
+		ofDrawBitmapString(".(x:-50, y:-50, z:50) ", glm::vec3(-50, -50, 50));
+		ofDrawBitmapString(".(x:50, y:-50, z:-50) ", glm::vec3(50, -50, -50));
+		ofDrawBitmapString(".(x:-50, y:50, z:-50) ", glm::vec3(-50, 50, -50));
+		ofDrawBitmapString(".(x:-50, y:-50, z:-50) ", glm::vec3(-50, -50, -50));
+		ofDrawBitmapString(".(x:50, y:50, z:50) ", glm::vec3(50, 50, 50));
+
+		ofDrawBitmapString(".boxCorner", (box.getSize() / 2));
+		ofDrawBitmapString(".boxCorner", (-box.getSize() / 2));
+
+		ofDrawBitmapString(".boxCorner", -box.getSize().x / 2, box.getSize().y / 2, box.getSize().z / 2);
+		ofDrawBitmapString(".boxCorner", box.getSize().x / 2, -box.getSize().y / 2, box.getSize().z / 2);
+		ofDrawBitmapString(".boxCorner", box.getSize().x / 2, box.getSize().y / 2, -box.getSize().z / 2);
+
+		ofDrawBitmapString(".boxCorner", -box.getSize().x / 2, -box.getSize().y / 2, box.getSize().z / 2);
+		ofDrawBitmapString(".boxCorner", box.getSize().x / 2, -box.getSize().y / 2, -box.getSize().z / 2);
+		ofDrawBitmapString(".boxCorner", -box.getSize().x / 2, box.getSize().y / 2, -box.getSize().z / 2);
+
+		ofDrawBitmapString(".boxCenter", (box.getGlobalPosition()));
+	}
 
 	ofPopStyle();
 
@@ -100,6 +122,15 @@ void ofApp::keyPressed(int key){
 	if (key == ' ') {
 		emitter.particles.clear();
 		emitter.setup(1000);
+	}
+
+	if (key == 't') {
+		if (!debugText) {
+			debugText = true;
+		}
+		else {
+			debugText = false;
+		}
 	}
 }
 

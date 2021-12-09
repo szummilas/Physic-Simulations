@@ -23,11 +23,13 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 
 		bool drawingGrid;
+		bool debugText;
 
 		ofEasyCam cam;
 		ofLight light;
 		ofMaterial material;
 		Grid grid;
+		ofBoxPrimitive box;
 
 		Emitter emitter;
 		
