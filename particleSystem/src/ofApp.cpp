@@ -11,12 +11,12 @@ void ofApp::setup(){
 
 	// ------- CAMERA SETUP STUFF -------
 	cam.setTarget(emitter);
-	cam.setDistance(1000);
+	cam.setDistance(200);
 	cam.setNearClip(10);
-	cam.setFarClip(10000);
+	cam.setFarClip(1000);
 
 
-	emitter.setup(1000);
+	emitter.setup(10000);
 
 	drawingGrid = false;
 }
@@ -24,6 +24,8 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 	emitter.update();
+
+	// std::cout << emitter.particles[10].age << '\n';
 }
 
 //--------------------------------------------------------------
@@ -43,10 +45,10 @@ void ofApp::draw(){
 
 	light.enable();
 	light.setPosition(-100, 0, 0);
-	light.rotateDeg(10, 0, 0, 90);
-	light.setSpotlight();
-	// light.setDiffuseColor(ofColor::orange); // pogchamp light color
-	light.draw();
+	//light.rotateDeg(10, 0, 0, 90);
+	//light.setSpotlight();
+	light.setDiffuseColor(ofColor::orange); // pogchamp light color
+	//light.draw();
 	//light.disable();
 	//ofDisableLighting();
 	emitter.draw();
@@ -67,6 +69,11 @@ void ofApp::keyPressed(int key){
 		else {
 			drawingGrid = false;
 		}
+	}
+
+	if (key == ' ') {
+		emitter.particles.clear();
+		emitter.setup(1000);
 	}
 }
 
