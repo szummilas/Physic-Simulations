@@ -133,46 +133,44 @@ void Boom::draw(std::vector<Particle>& particles) {
 	
 }
 
-void Boom::update(std::vector<Particle>& particles, Emitter& emitter, float& dt) {
-	if (particles.size() != 0) {
-		for (unsigned int i = 0; i < particles.size(); i++) {
-			// computing particle age
-			particles[i].age += ofGetLastFrameTime();
+void Boom::update(std::vector<Particle>& particles, Emitter& emitter, float& dt) {	
+	for (unsigned int i = 0; i < particles.size(); i++) {
+		// computing particle age
+		particles[i].age += ofGetLastFrameTime();
 
-			// particle physics
-			particles[i].position -= particles[i].velocity;
+		// particle physics
+		particles[i].position -= particles[i].velocity;
 
-			// particle disapearing
-			if (particles[i].age > particles[i].lifetime) {
-				particles.erase(particles.begin() + i);
-			}
+		if (particles[i].position.x > (emitter.box.getSize().x / 2)) {
+			particles[i].position.x = (emitter.box.getSize().x / 2);
+			particles[i].velocity.x *= -1.0;
+		}
+		else if (particles[i].position.x < -(emitter.box.getSize().x / 2)) {
+			particles[i].position.x = -(emitter.box.getSize().x / 2);
+			particles[i].velocity.x *= -1.0;
+		}
 
-			if (particles[i].position.x > (emitter.box.getSize().x / 2)) {
-				particles[i].position.x = (emitter.box.getSize().x / 2);
-				particles[i].velocity.x *= -1.0;
-			}
-			else if (particles[i].position.x < -(emitter.box.getSize().x / 2)) {
-				particles[i].position.x = -(emitter.box.getSize().x / 2);
-				particles[i].velocity.x *= -1.0;
-			}
+		if (particles[i].position.y > (emitter.box.getSize().y / 2)) {
+			particles[i].position.y = (emitter.box.getSize().y / 2);
+			particles[i].velocity.y *= -1.0;
+		}
+		else if (particles[i].position.y < -(emitter.box.getSize().y / 2)) {
+			particles[i].position.y = -(emitter.box.getSize().y / 2);
+			particles[i].velocity.y *= -1.0;
+		}
 
-			if (particles[i].position.y > (emitter.box.getSize().y / 2)) {
-				particles[i].position.y = (emitter.box.getSize().y / 2);
-				particles[i].velocity.y *= -1.0;
-			}
-			else if (particles[i].position.y < -(emitter.box.getSize().y / 2)) {
-				particles[i].position.y = -(emitter.box.getSize().y / 2);
-				particles[i].velocity.y *= -1.0;
-			}
-
-			if (particles[i].position.z > (emitter.box.getSize().z / 2)) {
-				particles[i].position.z = (emitter.box.getSize().z / 2);
-				particles[i].velocity.z *= -1.0;
-			}
-			else if (particles[i].position.z < -(emitter.box.getSize().z / 2)) {
-				particles[i].position.z = -(emitter.box.getSize().z / 2);
-				particles[i].velocity.z *= -1.0;
-			}
+		if (particles[i].position.z > (emitter.box.getSize().z / 2)) {
+			particles[i].position.z = (emitter.box.getSize().z / 2);
+			particles[i].velocity.z *= -1.0;
+		}
+		else if (particles[i].position.z < -(emitter.box.getSize().z / 2)) {
+			particles[i].position.z = -(emitter.box.getSize().z / 2);
+			particles[i].velocity.z *= -1.0;
+		}
+			
+		// particle disapearing
+		if (particles[i].age > particles[i].lifetime) {
+			particles.erase(particles.begin() + i);
 		}
 	}
 }

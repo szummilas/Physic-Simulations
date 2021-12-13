@@ -37,34 +37,38 @@ void ofApp::setup(){
 void ofApp::update() {
 	emitter.update();
 
-	if (particle_effect.particles.size() != 0) {
-		if (keyEffect == 1 and particle_effect.particles.size() != 0) {
-			snow.update(particle_effect.particles, emitter, deltaTime);
-		}
+	if (keyEffect == 0) {
+		particle_effect.particles.clear();
+		particle_effect.setup(numOfParticles, emitter);
+	}
 
-		if (keyEffect == 2 and particle_effect.particles.size() != 0) {
-			matrix.update(particle_effect.particles, emitter, deltaTime);
-		}
+	if (keyEffect == 1) {
+		snow.update(particle_effect.particles, emitter, deltaTime);
+	}
 
-		if (keyEffect == 3 and particle_effect.particles.size() != NULL) {
-			boom.update(particle_effect.particles, emitter, deltaTime);
-		}
+	if (keyEffect == 2) {
+		matrix.update(particle_effect.particles, emitter, deltaTime);
+	}
 
-		// std::cout << emitter.particles[10].age << '\n';
+	if (keyEffect == 3) {
+		boom.update(particle_effect.particles, emitter, deltaTime);
+	}
 
-		/*if (emitter.particles.size() != NULL) {
-			std::cout << "velocity: " << emitter.particles[100].velocity.y << '\n';
-			std::cout << "position: " << emitter.particles[100].position.y << '\n';
-		}*/
+	// std::cout << emitter.particles[10].age << '\n';
+	std::cout << particle_effect.particles.size() << '\n';
 
-		// std::cout << "width: " << ofGetWidth() << " height: " << ofGetHeight() << '\n';
+	/*if (emitter.particles.size() != NULL) {
+		std::cout << "velocity: " << emitter.particles[100].velocity.y << '\n';
+		std::cout << "position: " << emitter.particles[100].position.y << '\n';
+	}*/
 
-		// std::cout << cam.worldToScreen(glm::vec3(100, 100, 100)) << '\n';
-		if (sliderSize != temp_size) {
-			particle_effect.particles.clear();
-			particle_effect.setup(numOfParticles, emitter);
-			temp_size = sliderSize;
-		}
+	// std::cout << "width: " << ofGetWidth() << " height: " << ofGetHeight() << '\n';
+
+	// std::cout << cam.worldToScreen(glm::vec3(100, 100, 100)) << '\n';
+	if (sliderSize != temp_size) {
+		particle_effect.particles.clear();
+		particle_effect.setup(numOfParticles, emitter);
+		temp_size = sliderSize;
 	}
 	
 }
@@ -104,19 +108,18 @@ void ofApp::draw(){
 	////ofDisableLighting();
 	emitter.draw(sliderSize);
 
-	if (particle_effect.particles.size() != 0) {
-		if (keyEffect == 1 and particle_effect.particles.size() != 0) {
-			snow.draw(particle_effect.particles);
-		}
-
-		if (keyEffect == 2 and particle_effect.particles.size() != 0) {
-			matrix.draw(particle_effect.particles);
-		}
-
-		if (keyEffect == 3 and particle_effect.particles.size() != 0) {
-			boom.draw(particle_effect.particles);
-		}
+	if (keyEffect == 1) {
+		snow.draw(particle_effect.particles);
 	}
+
+	if (keyEffect == 2) {
+		matrix.draw(particle_effect.particles);
+	}
+
+	if (keyEffect == 3 ) {
+		boom.draw(particle_effect.particles);
+	}
+
 	
 	light.disable();
 
