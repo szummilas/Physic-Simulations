@@ -15,35 +15,69 @@ void ofApp::setup(){
 	cam.setNearClip(10);
 	cam.setFarClip(1000);
 
-	// emitter.setup(10000);
-
 	drawingGrid = false;
 	debugText = false;
 	box.set(20);
+
+	gui.setup();
+	mixerGroup.setup("GUI");
+	mixerGroup.setHeaderBackgroundColor(ofColor::darkBlue);
+	mixerGroup.setBorderColor(ofColor::darkBlue);
+	mixerGroup.add(sliderSize.set("size", 100, 100, 500));
+	fbo3d.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
+	gui.add(&mixerGroup);
+
+	particle_effect.setup(numOfParticles, emitter);
+	boom.setup(particle_effect.particles, emitter);
+
+	keyEffect = 0;
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
 	emitter.update();
 
-	// std::cout << emitter.particles[10].age << '\n';
+	if (particle_effect.particles.size() != 0) {
+		if (keyEffect == 1 and particle_effect.particles.size() != 0) {
+			snow.update(particle_effect.particles, emitter, deltaTime);
+		}
 
-	/*if (emitter.particles.size() != NULL) {
-		std::cout << "velocity: " << emitter.particles[100].velocity.y << '\n';
-		std::cout << "position: " << emitter.particles[100].position.y << '\n';
-	}*/
+		if (keyEffect == 2 and particle_effect.particles.size() != 0) {
+			matrix.update(particle_effect.particles, emitter, deltaTime);
+		}
 
-	// std::cout << "width: " << ofGetWidth() << " height: " << ofGetHeight() << '\n';
+		if (keyEffect == 3 and particle_effect.particles.size() != NULL) {
+			boom.update(particle_effect.particles, emitter, deltaTime);
+		}
 
-	// std::cout << cam.worldToScreen(glm::vec3(100, 100, 100)) << '\n';
+		// std::cout << emitter.particles[10].age << '\n';
 
-	std::cout << box.getX() << '\n';
+		/*if (emitter.particles.size() != NULL) {
+			std::cout << "velocity: " << emitter.particles[100].velocity.y << '\n';
+			std::cout << "position: " << emitter.particles[100].position.y << '\n';
+		}*/
+
+		// std::cout << "width: " << ofGetWidth() << " height: " << ofGetHeight() << '\n';
+
+		// std::cout << cam.worldToScreen(glm::vec3(100, 100, 100)) << '\n';
+		if (sliderSize != temp_size) {
+			particle_effect.particles.clear();
+			particle_effect.setup(numOfParticles, emitter);
+			temp_size = sliderSize;
+		}
+	}
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	cam.begin();
+	ofDisableDepthTest();
+	ofDisableSeparateSpecularLight();
+	ofDisableLighting();
+	gui.draw();
 
+	cam.begin();
+	
 	ofEnableDepthTest();
 	//ofEnableLighting();
 	ofDisableLighting();
@@ -59,22 +93,35 @@ void ofApp::draw(){
 	//box.drawAxes(3);
 	//box.drawWireframe();
 
-	//light.enable();
-	//light.setPosition(0, -50, 0);
+	light.enable();
+	light.setPosition(0, 60, 0);
 	//light.setDirectional();
-	//light.draw();
+	light.draw();
 	////light.rotateDeg(10, 0, 0, 90);
 	////light.setSpotlight();
-	////light.setDiffuseColor(ofColor::orange); // pogchamp light color
+	light.setDiffuseColor(ofColor::orange); // pogchamp light color
 	////light.disable();
 	////ofDisableLighting();
-	emitter.draw();
+	emitter.draw(sliderSize);
 
-	//light.disable();
-	//ofDisableLighting();
+	if (particle_effect.particles.size() != 0) {
+		if (keyEffect == 1 and particle_effect.particles.size() != 0) {
+			snow.draw(particle_effect.particles);
+		}
+
+		if (keyEffect == 2 and particle_effect.particles.size() != 0) {
+			matrix.draw(particle_effect.particles);
+		}
+
+		if (keyEffect == 3 and particle_effect.particles.size() != 0) {
+			boom.draw(particle_effect.particles);
+		}
+	}
+	
+	light.disable();
 
 	ofSetColor(255, 255, 255);
-	//ofDrawSphere(light.getPosition(), 2.0);
+	ofDrawSphere(light.getPosition(), 2.0);
 
 	if (drawingGrid) { grid.draw(); }
 
@@ -120,8 +167,8 @@ void ofApp::keyPressed(int key){
 	}
 
 	if (key == ' ') {
-		emitter.particles.clear();
-		emitter.setup(1000);
+		particle_effect.particles.clear();
+		particle_effect.setup(numOfParticles, emitter);
 	}
 
 	if (key == 't') {
@@ -131,6 +178,31 @@ void ofApp::keyPressed(int key){
 		else {
 			debugText = false;
 		}
+	}
+
+	if (key == '0') {
+		particle_effect.particles.clear();
+		particle_effect.setup(numOfParticles, emitter);
+		keyEffect = 0;
+	}
+
+	if (key == '1') {
+		particle_effect.particles.clear();
+		particle_effect.setup(numOfParticles, emitter);
+		keyEffect = 1;
+	}
+
+	if (key == '2') {
+		particle_effect.particles.clear();
+		particle_effect.setup(numOfParticles, emitter);
+		keyEffect = 2;
+	}
+
+	if (key == '3') {
+		particle_effect.particles.clear();
+		particle_effect.setup(numOfParticles, emitter);
+		boom.setup(particle_effect.particles, emitter);
+		keyEffect = 3;
 	}
 }
 

@@ -2,6 +2,8 @@
 #include "ofMain.h"
 #include "emitter.h"
 #include "grid.h"
+#include "ofxGui.h"
+#include "particleEffect.h"
 
 class ofApp : public ofBaseApp{
 
@@ -31,6 +33,21 @@ class ofApp : public ofBaseApp{
 		Grid grid;
 		ofBoxPrimitive box;
 
+		ofxPanel gui;
+		ofxGuiGroup mixerGroup;
+		ofxIntSlider show2d;
+		ofParameter<int> sliderSize;
+		ofFbo fbo3d;
+		ofParameter<int> temp_size;
+
+
 		Emitter emitter;
-		
+		ParticleEffect particle_effect;
+		Snow snow;
+		Matrix matrix;
+		Boom boom;
+
+		int numOfParticles = 3000;
+		float deltaTime = ofGetLastFrameTime();
+		int keyEffect;
 };
