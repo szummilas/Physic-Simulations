@@ -23,11 +23,15 @@ void ofApp::setup(){
 	mixerGroup.setup("GUI");
 	mixerGroup.setHeaderBackgroundColor(ofColor::darkBlue);
 	mixerGroup.setBorderColor(ofColor::darkBlue);
-	mixerGroup.add(sliderSize.set("size", 100, 100, 500));
+	mixerGroup.add(sliderSize.set("box size", 100, 100, 500));
+	mixerGroup.add(sliderNumOfPart.set("number of particles", 1000, 1, 2000));
+	mixerGroup.add(toggler.setup(ifBox, false));
+	toggler.setName("particles in box shape");
+	mixerGroup.add(color.set(ofColor::white));
 	fbo3d.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
 	gui.add(&mixerGroup);
 
-	particle_effect.setup(numOfParticles, emitter);
+	particle_effect.setup(sliderNumOfPart, emitter);
 	boom.setup(particle_effect.particles, emitter);
 
 	keyEffect = 0;
@@ -39,7 +43,7 @@ void ofApp::update() {
 
 	if (keyEffect == 0) {
 		particle_effect.particles.clear();
-		particle_effect.setup(numOfParticles, emitter);
+		particle_effect.setup(sliderNumOfPart, emitter);
 	}
 
 	if (keyEffect == 1) {
@@ -54,8 +58,19 @@ void ofApp::update() {
 		boom.update(particle_effect.particles, emitter, deltaTime);
 	}
 
+	if (keyEffect == 4) {
+		custom.update(particle_effect.particles, emitter, deltaTime);
+	}
+
 	// std::cout << emitter.particles[10].age << '\n';
-	std::cout << particle_effect.particles.size() << '\n';
+	std::cout << toggler.getParameter() << '\n';
+
+	if (toggler.getParameter().toString() == "0") {
+		ifBox = false;
+	}
+	else {
+		ifBox = true;
+	}
 
 	/*if (emitter.particles.size() != NULL) {
 		std::cout << "velocity: " << emitter.particles[100].velocity.y << '\n';
@@ -65,10 +80,14 @@ void ofApp::update() {
 	// std::cout << "width: " << ofGetWidth() << " height: " << ofGetHeight() << '\n';
 
 	// std::cout << cam.worldToScreen(glm::vec3(100, 100, 100)) << '\n';
-	if (sliderSize != temp_size) {
+	if (sliderSize != temp_size or sliderNumOfPart != temp_numOfPart) {
 		particle_effect.particles.clear();
-		particle_effect.setup(numOfParticles, emitter);
+		particle_effect.setup(sliderNumOfPart, emitter);
+		if (keyEffect == 3) {
+			boom.setup(particle_effect.particles, emitter);
+		}
 		temp_size = sliderSize;
+		temp_numOfPart = sliderNumOfPart;
 	}
 	
 }
@@ -97,19 +116,19 @@ void ofApp::draw(){
 	//box.drawAxes(3);
 	//box.drawWireframe();
 
-	light.enable();
-	light.setPosition(0, 60, 0);
+	//light.enable();
+	//light.setPosition(0, 60, 0);
 	//light.setDirectional();
-	light.draw();
+	//light.draw();
 	////light.rotateDeg(10, 0, 0, 90);
 	////light.setSpotlight();
-	light.setDiffuseColor(ofColor::orange); // pogchamp light color
-	////light.disable();
+	//light.setDiffuseColor(ofColor::orange); // pogchamp light color
+	//light.disable();
 	////ofDisableLighting();
 	emitter.draw(sliderSize);
 
 	if (keyEffect == 1) {
-		snow.draw(particle_effect.particles);
+		snow.draw(particle_effect.particles, ifBox);
 	}
 
 	if (keyEffect == 2) {
@@ -117,14 +136,19 @@ void ofApp::draw(){
 	}
 
 	if (keyEffect == 3 ) {
-		boom.draw(particle_effect.particles);
+		boom.draw(particle_effect.particles, ifBox);
 	}
 
+	if (keyEffect == 4) {
+		custom.draw(particle_effect.particles, color.get(), ifBox);
+	}
 	
-	light.disable();
+	ofPushStyle();
+	//ofSetColor(ofColor::white);
+	//ofDrawSphere(light.getPosition(), 2);
+	ofPopStyle();
 
-	ofSetColor(255, 255, 255);
-	ofDrawSphere(light.getPosition(), 2.0);
+	//light.disable();
 
 	if (drawingGrid) { grid.draw(); }
 
@@ -171,7 +195,7 @@ void ofApp::keyPressed(int key){
 
 	if (key == ' ') {
 		particle_effect.particles.clear();
-		particle_effect.setup(numOfParticles, emitter);
+		particle_effect.setup(sliderNumOfPart, emitter);
 	}
 
 	if (key == 't') {
@@ -185,27 +209,33 @@ void ofApp::keyPressed(int key){
 
 	if (key == '0') {
 		particle_effect.particles.clear();
-		particle_effect.setup(numOfParticles, emitter);
+		particle_effect.setup(sliderNumOfPart, emitter);
 		keyEffect = 0;
 	}
 
 	if (key == '1') {
 		particle_effect.particles.clear();
-		particle_effect.setup(numOfParticles, emitter);
+		particle_effect.setup(sliderNumOfPart, emitter);
 		keyEffect = 1;
 	}
 
 	if (key == '2') {
 		particle_effect.particles.clear();
-		particle_effect.setup(numOfParticles, emitter);
+		particle_effect.setup(sliderNumOfPart, emitter);
 		keyEffect = 2;
 	}
 
 	if (key == '3') {
 		particle_effect.particles.clear();
-		particle_effect.setup(numOfParticles, emitter);
+		particle_effect.setup(sliderNumOfPart, emitter);
 		boom.setup(particle_effect.particles, emitter);
 		keyEffect = 3;
+	}
+
+	if (key == '4') {
+		particle_effect.particles.clear();
+		particle_effect.setup(sliderNumOfPart, emitter);
+		keyEffect = 4;
 	}
 }
 

@@ -100,8 +100,4 @@
     <ClInclude Include="src\particleEffect.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="res\one.png" />
-    <Image Include="res\zero.png" />
-  </ItemGroup>
 </Project>

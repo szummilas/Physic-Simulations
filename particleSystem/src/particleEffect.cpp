@@ -1,6 +1,6 @@
 #include "particleEffect.h"
 
-void ParticleEffect::setup(int& numOfParticles, Emitter& emitter) {
+void ParticleEffect::setup(ofParameter<int>& numOfParticles, Emitter& emitter) {
 	for (unsigned int i = 0; i < numOfParticles; i++) {
 		Particle newParticle;
 		newParticle.position = glm::vec3((int)ofRandom(-emitter.box.getSize().x / 2, emitter.box.getSize().x / 2),
@@ -20,9 +20,14 @@ void ParticleEffect::setup(int& numOfParticles, Emitter& emitter) {
 	}
 }
 
-void Snow::draw(std::vector<Particle>& particles) {
+void Snow::draw(std::vector<Particle>& particles, bool& ifBox) {
 	for (unsigned int i = 0; i < particles.size(); i++) {
-		ofDrawSphere(particles[i].position, ofRandom(0.3, 0.5));
+		if (ifBox) {
+			ofDrawBox(particles[i].position, ofRandom(0.3, 0.5));
+		}
+		else {
+			ofDrawSphere(particles[i].position, ofRandom(0.3, 0.5));
+		}
 	}
 }
 
@@ -71,15 +76,15 @@ void Snow::update(std::vector<Particle>& particles, Emitter &emitter, float& dt)
 void Matrix::draw(std::vector<Particle>& particles) {
 	for (unsigned int i = 0; i < particles.size(); i++) {
 		ofSetColor(0, 255, 0);
-		ofDrawPlane(particles[i].position, 0.5, 0.5);
+		//ofDrawPlane(particles[i].position, 0.5, 0.5);
 
-		//if (i % 2 == 0) {
-			//ofDrawBitmapString("1", particles[i].position);
-		//} 
+		if (i % 2 == 0) {
+			ofDrawBitmapString("1", particles[i].position);
+		} 
 	
-		//else {
-			//ofDrawBitmapString("0", particles[i].position);
-		//}
+		else {
+			ofDrawBitmapString("0", particles[i].position);
+		}
 	}
 }
 
@@ -121,16 +126,17 @@ void Boom::setup(std::vector<Particle>& particles, Emitter& emitter) {
 	}
 }
 
-void Boom::draw(std::vector<Particle>& particles) {
+void Boom::draw(std::vector<Particle>& particles, bool& ifBox) {
 	if (particles.size() != 0) {
 		for (unsigned int i = 0; i < particles.size(); i++) {
-			ofDrawSphere(particles[i].position, 1 / particles[i].age);
-			//ofDrawSphere(particles[i].position, ofRandom(0.3, 0.5));
-			//ofDrawBox(particles[i].position, 1);
-			//ofDrawPlane(particles[i].position, 0.5, 0.5);
+			if (ifBox) {
+				ofDrawBox(particles[i].position, 1 / particles[i].age);
+			}
+			else {
+				ofDrawSphere(particles[i].position, 1 / particles[i].age);
+			}
 		}
 	}
-	
 }
 
 void Boom::update(std::vector<Particle>& particles, Emitter& emitter, float& dt) {	
@@ -171,6 +177,59 @@ void Boom::update(std::vector<Particle>& particles, Emitter& emitter, float& dt)
 		// particle disapearing
 		if (particles[i].age > particles[i].lifetime) {
 			particles.erase(particles.begin() + i);
+		}
+	}
+}
+
+void CustomEffect::draw(std::vector<Particle>& particles, const ofColor& color, bool& ifBox) {
+	for (unsigned int i = 0; i < particles.size(); i++) {
+		ofSetColor(color);
+		if (ifBox) {
+			ofDrawBox(particles[i].position, ofRandom(0.3, 0.5));
+		}
+		else {
+			ofDrawSphere(particles[i].position, ofRandom(0.3, 0.5));
+		}
+	}
+}
+
+void CustomEffect::update(std::vector<Particle>& particles, Emitter& emitter, float& dt) {
+	for (unsigned int i = 0; i < particles.size(); i++) {
+
+		// ------- SNOW -------
+		float fakeWindX = ofSignedNoise(particles[i].position.x * 0.003, particles[i].position.y * 0.006, ofGetElapsedTimef() * 0.6);
+		particles[i].friction.x = fakeWindX * 0.25 + ofSignedNoise(particles[i].uniqueVal, particles[i].position.y * 0.04) * 0.6;
+		particles[i].friction.y = ofSignedNoise(particles[i].uniqueVal, particles[i].position.x * 0.006, ofGetElapsedTimef() * 0.2) * 0.09 + 0.18;
+
+		particles[i].velocity *= particles[i].drag;
+		particles[i].velocity += particles[i].friction * 0.04;
+
+
+		//we do this so as to skip the bounds check for the bottom and make the particles go back to the top of the screen
+		if (particles[i].position.y + particles[i].velocity.y < -emitter.box.getSize().y / 2) {
+			particles[i].position.y += emitter.box.getSize().y;
+		}
+
+		// particle physics
+		particles[i].position -= particles[i].velocity;
+		particles[i].velocity += -0.1f * particles[i].position * dt;
+
+		if (particles[i].position.x > (emitter.box.getSize().x / 2)) {
+			particles[i].position.x = (emitter.box.getSize().x / 2);
+			particles[i].velocity.x *= -1.0;
+		}
+		else if (particles[i].position.x < -(emitter.box.getSize().x / 2)) {
+			particles[i].position.x = -(emitter.box.getSize().x / 2);
+			particles[i].velocity.x *= -1.0;
+		}
+
+		if (particles[i].position.z > (emitter.box.getSize().z / 2)) {
+			particles[i].position.z = (emitter.box.getSize().z / 2);
+			particles[i].velocity.z *= -1.0;
+		}
+		else if (particles[i].position.z < -(emitter.box.getSize().z / 2)) {
+			particles[i].position.z = -(emitter.box.getSize().z / 2);
+			particles[i].velocity.z *= -1.0;
 		}
 	}
 }

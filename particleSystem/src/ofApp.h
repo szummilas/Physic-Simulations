@@ -26,6 +26,7 @@ class ofApp : public ofBaseApp{
 
 		bool drawingGrid;
 		bool debugText;
+		bool ifBox;
 
 		ofEasyCam cam;
 		ofLight light;
@@ -37,8 +38,12 @@ class ofApp : public ofBaseApp{
 		ofxGuiGroup mixerGroup;
 		ofxIntSlider show2d;
 		ofParameter<int> sliderSize;
+		ofParameter<int> sliderNumOfPart;
+		ofxToggle toggler;
 		ofFbo fbo3d;
 		ofParameter<int> temp_size;
+		ofParameter<int> temp_numOfPart;
+		ofParameter<ofColor> color;
 
 
 		Emitter emitter;
@@ -46,6 +51,7 @@ class ofApp : public ofBaseApp{
 		Snow snow;
 		Matrix matrix;
 		Boom boom;
+		CustomEffect custom;
 
 		int numOfParticles = 3000;
 		float deltaTime = ofGetLastFrameTime();

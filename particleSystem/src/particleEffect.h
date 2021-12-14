@@ -18,12 +18,12 @@ public:
 
 	std::vector<Particle> particles;
 
-	void setup(int& numOfParticles, Emitter& emitter);
+	void setup(ofParameter<int>& numOfParticles, Emitter& emitter);
 };
 
 class Snow : public ParticleEffect {
 public:
-	void draw(std::vector<Particle>& particles);
+	void draw(std::vector<Particle>& particles, bool& ifBox);
 	void update(std::vector<Particle>& particles, Emitter& emitter, float& dt);
 };
 
@@ -36,12 +36,14 @@ public:
 class Boom : public ParticleEffect {
 public:
 	void setup(std::vector<Particle>& particles, Emitter& emitter);
-	void draw(std::vector<Particle>& particles);
+	void draw(std::vector<Particle>& particles, bool& ifBox);
 	void update(std::vector<Particle>& particles, Emitter& emitter, float& dt);
 };
 
 class CustomEffect : public ParticleEffect {
-
+public:
+	void draw(std::vector<Particle>& particles, const ofColor& color, bool& ifBox);
+	void update(std::vector<Particle>& particles, Emitter& emitter, float& dt);
 };
 
 
