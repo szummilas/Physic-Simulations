@@ -8,6 +8,13 @@ public:
 		glm::vec3 position;
 		glm::vec3 velocity;
 		glm::vec3 friction;
+		glm::vec3 acceleration;
+
+		glm::vec3 rotation;
+		glm::vec3 proj;
+		float theta;
+		float phi;
+
 		ofColor color;
 		float age;
 		float lifetime;
@@ -43,6 +50,14 @@ public:
 class CustomEffect : public ParticleEffect {
 public:
 	void draw(std::vector<Particle>& particles, const ofColor& color, bool& ifBox);
+	void update(std::vector<Particle>& particles, Emitter& emitter, float& dt);
+};
+
+class Firework : public ParticleEffect {
+public:
+	float distance;
+	void setup(std::vector<Particle>& particles, Emitter& emitter);
+	void draw(std::vector<Particle>& particles, bool& ifBox);
 	void update(std::vector<Particle>& particles, Emitter& emitter, float& dt);
 };
 

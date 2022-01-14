@@ -32,6 +32,8 @@ void Snow::draw(std::vector<Particle>& particles, bool& ifBox) {
 }
 
 void Snow::update(std::vector<Particle>& particles, Emitter &emitter, float& dt) {
+
+	std::cout << emitter.box.getSize().x / 2 << '\n';
 	for (unsigned int i = 0; i < particles.size(); i++) {
 
 		// ------- SNOW -------
@@ -121,7 +123,6 @@ void Matrix::update(std::vector<Particle>& particles, Emitter& emitter, float& d
 void Boom::setup(std::vector<Particle>& particles, Emitter& emitter) {
 	for (unsigned int i = 0; i < particles.size(); i++) {
 		particles[i].velocity = glm::vec3(ofRandom(-1,1), ofRandom(-1, 1), ofRandom(-1, 1));
-		//particles[i].position = glm::vec3(emitter.box.getSize().x / 2, emitter.box.getSize().y / 2, emitter.box.getSize().z / 2);
 		particles[i].position = glm::vec3(0, 0, 0);
 	}
 }
@@ -184,12 +185,10 @@ void Boom::update(std::vector<Particle>& particles, Emitter& emitter, float& dt)
 void CustomEffect::draw(std::vector<Particle>& particles, const ofColor& color, bool& ifBox) {
 	for (unsigned int i = 0; i < particles.size(); i++) {
 		ofSetColor(color);
-		if (ifBox) {
-			ofDrawBox(particles[i].position, ofRandom(0.3, 0.5));
-		}
-		else {
-			ofDrawSphere(particles[i].position, ofRandom(0.3, 0.5));
-		}
+		ofDrawSphere(particles[i].position, ofRandom(0.3, 0.5));
+		if (i < particles.size() - 1) { ofDrawLine(particles[i].position, particles[i + 1].position); }
+		
+
 	}
 }
 
@@ -231,5 +230,80 @@ void CustomEffect::update(std::vector<Particle>& particles, Emitter& emitter, fl
 			particles[i].position.z = -(emitter.box.getSize().z / 2);
 			particles[i].velocity.z *= -1.0;
 		}
+	}
+}
+
+void Firework::setup(std::vector<Particle>& particles, Emitter& emitter) {
+	for (unsigned int i = 0; i < particles.size(); i++) {
+		particles[i].velocity = glm::vec3(ofRandom(-1, 1), ofRandom(-1, 1), ofRandom(-1, 1));
+		particles[i].position = glm::vec3(ofRandom(-49, 49), ofRandom(-49, 49), ofRandom(-49, 49));
+	}
+}
+
+void Firework::draw(std::vector<Particle>& particles, bool& ifBox) {
+	for (unsigned int i = 0; i < particles.size(); i++) {
+		ofDrawSphere(particles[i].position, ofRandom(0.3, 0.5));
+	
+		for (int j = i + 1; j < particles.size(); j++) {
+			if (distance <= 20) {
+				std::cout << "TEST" << '\n';
+				ofDrawLine(particles[i].position, particles[j].position);
+			}
+		}
+	}
+}
+
+void Firework::update(std::vector<Particle>& particles, Emitter& emitter, float& dt) {
+	for (unsigned int i = 0; i < particles.size(); i++) {
+
+		particles[i].position += particles[i].velocity;
+
+		if (particles[i].position.x > (emitter.box.getSize().x / 2)) {
+			particles[i].position.x = (emitter.box.getSize().x / 2);
+			particles[i].velocity.x *= -1.0;
+		}
+		else if (particles[i].position.x < -(emitter.box.getSize().x / 2)) {
+			particles[i].position.x = -(emitter.box.getSize().x / 2);
+			particles[i].velocity.x *= -1.0;
+		}
+
+		if (particles[i].position.y > (emitter.box.getSize().y / 2)) {
+			particles[i].position.y = (emitter.box.getSize().y / 2);
+			particles[i].velocity.y *= -1.0;
+		}
+		else if (particles[i].position.y < -(emitter.box.getSize().y / 2)) {
+			particles[i].position.y = -(emitter.box.getSize().y / 2);
+			particles[i].velocity.y *= -1.0;
+		}
+
+		if (particles[i].position.z > (emitter.box.getSize().z / 2)) {
+			particles[i].position.z = (emitter.box.getSize().z / 2);
+			particles[i].velocity.z *= -1.0;
+		}
+		else if (particles[i].position.z < -(emitter.box.getSize().z / 2)) {
+			particles[i].position.z = -(emitter.box.getSize().z / 2);
+			particles[i].velocity.z *= -1.0;
+		}
+
+		
+		for (int j = i + 1; j < particles.size(); j++) {
+			distance = ofDist(
+				particles[i].position.x,
+				particles[i].position.y,
+				particles[i].position.z,
+				particles[j].position.x,
+				particles[j].position.y,
+				particles[j].position.z);
+
+			if (distance <= 20)
+			{
+				//std::cout << "TEST1" << '\n';
+				particles[i].acceleration = glm::vec3(distance / 2000);
+				particles[i].velocity -= particles[i].acceleration;
+				particles[j].velocity += particles[i].acceleration;
+			}
+			
+		}
+	
 	}
 }

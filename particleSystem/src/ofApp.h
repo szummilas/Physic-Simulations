@@ -52,6 +52,7 @@ class ofApp : public ofBaseApp{
 		Matrix matrix;
 		Boom boom;
 		CustomEffect custom;
+		Firework firework;
 
 		int numOfParticles = 3000;
 		float deltaTime = ofGetLastFrameTime();

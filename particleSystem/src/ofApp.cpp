@@ -33,6 +33,7 @@ void ofApp::setup(){
 
 	particle_effect.setup(sliderNumOfPart, emitter);
 	boom.setup(particle_effect.particles, emitter);
+	firework.setup(particle_effect.particles, emitter);
 
 	keyEffect = 0;
 }
@@ -62,8 +63,9 @@ void ofApp::update() {
 		custom.update(particle_effect.particles, emitter, deltaTime);
 	}
 
-	// std::cout << emitter.particles[10].age << '\n';
-	std::cout << toggler.getParameter() << '\n';
+	if (keyEffect == 5) {
+		firework.update(particle_effect.particles, emitter, deltaTime);
+	}
 
 	if (toggler.getParameter().toString() == "0") {
 		ifBox = false;
@@ -141,6 +143,10 @@ void ofApp::draw(){
 
 	if (keyEffect == 4) {
 		custom.draw(particle_effect.particles, color.get(), ifBox);
+	}
+
+	if (keyEffect == 5) {
+		firework.draw(particle_effect.particles, ifBox);
 	}
 	
 	ofPushStyle();
@@ -236,6 +242,13 @@ void ofApp::keyPressed(int key){
 		particle_effect.particles.clear();
 		particle_effect.setup(sliderNumOfPart, emitter);
 		keyEffect = 4;
+	}
+
+	if (key == '5') {
+		particle_effect.particles.clear();
+		particle_effect.setup(sliderNumOfPart, emitter);
+		firework.setup(particle_effect.particles, emitter);
+		keyEffect = 5;
 	}
 }
 
