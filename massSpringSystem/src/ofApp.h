@@ -1,6 +1,6 @@
 #pragma once
 #include "ofMain.h"
-#include "point.h"
+#include "cloth.h"
 
 class ofApp : public ofBaseApp{
 
@@ -21,10 +21,11 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		glm::vec2 clothSize = glm::vec2(8, 10);
+		Cloth cloth;
+		/*glm::vec2 clothSize = glm::vec2(8, 10);
 		glm::vec2 startPos = glm::vec2(ofGetWindowWidth() / 2 - 250, ofGetWindowHeight() / 2 - 200);
-		int spacing = 50;
+		int restDistance = 50;
 		
-		std::vector<Point *> points;
-		std::vector<Constraint> constraints;
+		std::vector<Point *> points;*/
+		
 };

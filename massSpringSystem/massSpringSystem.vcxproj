@@ -180,6 +180,7 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\cloth.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\..\Documents\of_v0.11.2_vs2017_release\addons\ofxGui\src\ofxBaseGui.cpp" />
@@ -195,6 +196,7 @@
     <ClCompile Include="src\point.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\cloth.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\..\Documents\of_v0.11.2_vs2017_release\addons\ofxGui\src\ofxBaseGui.h" />
     <ClInclude Include="..\..\..\..\Documents\of_v0.11.2_vs2017_release\addons\ofxGui\src\ofxButton.h" />
