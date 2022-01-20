@@ -1,20 +1,29 @@
 #pragma once
 #include "ofMain.h"
-#include "constraint.h"
 
 class Point {
 public:
 	
-	glm::vec2 currentPos;
-	glm::vec2 oldPos;
+	Point();
+
+	glm::vec2 position;
+	glm::vec2 lastPosition;
+	glm::vec2 nextPosition;
+
 	glm::vec2 velocity;
-	glm::vec2 index;
-	bool isEdge;
-	bool isVertical;
-	bool isHorizontal = false;
+	glm::vec2 acc;
+	float mass;
+
+	glm::vec2 grid;
+	int index;
 
 	void update(double& deltaTime);
 	void draw();
-	void addGrav();
+	void applyForce();
+};
+
+struct Constraint {
+	Point* p1;
+	Point* p2;
 };
 

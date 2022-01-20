@@ -38,7 +38,6 @@
       <Filter>addons\ofxGui\src</Filter>
     </ClCompile>
     <ClCompile Include="src\point.cpp" />
-    <ClCompile Include="src\constraint.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -95,7 +94,6 @@
       <Filter>addons\ofxGui\src</Filter>
     </ClInclude>
     <ClInclude Include="src\point.h" />
-    <ClInclude Include="src\constraint.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

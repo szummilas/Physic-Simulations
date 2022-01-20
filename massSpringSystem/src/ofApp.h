@@ -1,7 +1,6 @@
 #pragma once
 #include "ofMain.h"
 #include "point.h"
-#include "constraint.h"
 
 class ofApp : public ofBaseApp{
 
@@ -26,6 +25,6 @@ class ofApp : public ofBaseApp{
 		glm::vec2 startPos = glm::vec2(ofGetWindowWidth() / 2 - 250, ofGetWindowHeight() / 2 - 200);
 		int spacing = 50;
 		
-		std::vector<Point> points;
+		std::vector<Point *> points;
 		std::vector<Constraint> constraints;
 };

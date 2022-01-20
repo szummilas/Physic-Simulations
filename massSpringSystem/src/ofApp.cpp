@@ -3,31 +3,76 @@
 //--------------------------------------------------------------
 void ofApp::setup() {
 
+	int counter = 0;
+
 	for (int x = 0; x < clothSize.y; x++) {
 		for (int y = 0; y < clothSize.x; y++) {
 
-			Point newPoint;
+			Point* p = new Point();
 
-			newPoint.currentPos = glm::vec2(startPos.x + x * spacing, startPos.y + y * spacing);
-			newPoint.index = glm::vec2(x, y);
+			p->position = glm::vec2(startPos.x + x * spacing, startPos.y + y * spacing);
+			p->grid = glm::vec2(x, y);
+			p->index = counter;
 
-			if (y == clothSize.x - 1 or x == clothSize.y - 1) {
-				newPoint.isEdge = true;
+			p->velocity = glm::vec2(0, 0);
+			p->acc = glm::vec2(0, 0);
+			p->mass = 1.0;
 
-				if (y == clothSize.x - 1) {
-					newPoint.isVertical = true;
-				}
+			counter++;
 
-				if (x == clothSize.y - 1) {
-					newPoint.isHorizontal = true;
-				}
+			points.push_back(p);
+		}
+	}
 
-			}
-			else {
-				newPoint.isEdge = false;
-			}
+	// do kazdego punktu przypisuje krawedz skojarzona z tym punktem oraz punktem sasiednim
+	for (int i = 0; i < points.size() - 1; i++) {
 
-			points.push_back(newPoint);
+		// krawedzie pionowe (od gory do dolu)
+		// z wylaczeniem ostatniego rzedu poziomego (bo on nie ma juz krawedzi w dol)
+
+		/*
+				0	-> i		4
+				|				|
+				1	-> i + 1	5
+				|				|
+				2				6
+				|				|
+			   (3)			   (7)	
+
+			   TU NA DOLE NIE BEDZIE 
+			   JUZ KRAWEDZI
+		*/
+
+		if (points[i]->grid.y != clothSize.x - 1) {
+
+			Constraint c;
+
+			c.p1 = points[i];
+			c.p2 = points[i + 1];
+
+			constraints.push_back(c);
+		}
+
+		// krawedzie poziome (od lewej do prawej)
+		// z wylaczeniem ostatniego rzedu pionowego (bo on juz nie ma krawedzi w prawo)
+
+		/*
+				0	--	 (4)	->	TU PO
+				|		  |			PRAWEJ
+				1	--   (5)		STRONIE
+				|		  |			NIE BEDZIE
+				2	--   (6)		JUZ KRAWEDZI
+				|	      |
+			   (3)	--   (7)
+		*/
+
+		if (points[i]->grid.x != clothSize.y - 1) {
+
+			Constraint c;
+			c.p1 = points[i];
+			c.p2 = points[i + clothSize.x];
+
+			constraints.push_back(c);
 		}
 	}
 
@@ -35,18 +80,8 @@ void ofApp::setup() {
 
 	// ----	CONSOLE DEBUG ----
 	std::cout << points.size() << '\n';
+	std::cout << constraints.size() << '\n';
 	
-	for (int i = 0; i < points.size(); i++) {
-
-		//std::cout << "positions[" << i << "]: " << points[i].currentPos << '\n';
-		//std::cout << "index[" << i << "]: " << points[i].index << " " << points[i].isEdge << '\n';
-
-		/*if (glm::distance(points[0].currentPos, points[i + 1].currentPos) == spacing) {
-			std::cout << "NEIGH" << '\n';
-		}*/
-	}
-
-
 	//int k = 0;
 	//for (int i = 0; i < points.size(); i++) {
 	//	for (int j = 0; j < points.size(); j++) {
@@ -75,12 +110,9 @@ void ofApp::update() {
 
 	double dt = ofGetLastFrameTime();
 
-	std::cout << points[10].currentPos << '\n';
-
 	for (int i = 0; i < points.size(); i++) {
-		//points[i].currentPos.y += ofGetLastFrameTime() * 10;
-		
-		points[i].update(dt);
+		//points[i]->update(dt);
+		//points[i]->applyForce();
 	}
 }
 
@@ -89,10 +121,12 @@ void ofApp::draw() {
 	
 	for (int i = 0; i < points.size(); i++) {
 
-		points[i].draw();
-		ofDrawBitmapString(i, points[i].currentPos);
+		points[i]->draw();
+		ofDrawBitmapString(points[i]->index, points[i]->position);
 
-		if (points[i].isEdge == false) {
+	
+
+		/*if (points[i].isEdge == false) {
 
 			ofSetColor(ofColor::gray);
 			ofDrawLine(points[i].currentPos, points[i + 1].currentPos);
@@ -107,7 +141,7 @@ void ofApp::draw() {
 		if (points[i].isEdge and i < points.size() - 8) {
 			ofSetColor(ofColor::gray);
 			ofDrawLine(points[i].currentPos, points[i + 8].currentPos);
-		}
+		}*/
 
 		/*if (points[i].isHorizontal == true and i != points.size() - 1) {
 			ofSetColor(ofColor::gray);
@@ -116,6 +150,10 @@ void ofApp::draw() {
 
 	}
 
+	for (int i = 0; i < constraints.size(); i++) {
+
+		ofDrawLine(constraints[i].p1->position, constraints[i].p2->position);
+	}
 }
 
 //--------------------------------------------------------------
